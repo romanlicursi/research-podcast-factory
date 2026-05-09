@@ -37,7 +37,7 @@ Do not literally call those slash commands. Execute their workflows directly in 
 ## Hard Constraints
 
 - Consumer NotebookLM automation requires local NotebookLM auth and usually a browser/MCP session. The Mac must be on and Claude Code must have working NotebookLM tools/browser automation.
-- If NotebookLM Enterprise Audio Overview API or Google Podcast API credentials are available in the future, prefer that cloud path. Until then, this is a local automation workflow.
+- This is a local automation workflow. Consumer NotebookLM requires a logged-in browser/MCP path.
 - Daily NotebookLM generation limits are normal. If hit, save state and give exact resume instructions.
 - Spotify show creation requires explicit user confirmation unless config says auto-create.
 - Never upload duplicate audio unless `--force` is present.

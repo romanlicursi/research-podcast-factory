@@ -13,7 +13,7 @@ def main():
     parser.add_argument(
         "--mode",
         default="local-notebooklm",
-        choices=["local-notebooklm", "cloud-enterprise", "cloud-native"],
+        choices=["local-notebooklm", "manual-import"],
     )
     parser.add_argument(
         "--queue",

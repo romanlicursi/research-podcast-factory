@@ -52,7 +52,6 @@ def main() -> None:
         "claude-commands/research-notebook-factory.md",
         "codex-skill/research-podcast-factory/SKILL.md",
         "scripts/queue_topic.py",
-        "scripts/topic_webhook.py",
     ]), str(repo_root))
 
     add("state file", state_path.exists(), str(state_path))

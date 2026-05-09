@@ -1,78 +1,34 @@
 # Research Podcast Factory Architecture
 
-## Recommended Paths
-
-### 1. Local NotebookLM, Phone Trigger
+## Local NotebookLM Workflow
 
 Best when the user wants actual personal NotebookLM output.
 
 Flow:
 
 ```text
-iPhone Shortcut / text capture
-  -> queue record
-  -> Mac runner
-  -> local NotebookLM operator
+topic
+  -> source curation
   -> NotebookLM MCP/browser
   -> Audio Overview
+  -> downloaded audio
   -> save-to-spotify
   -> Spotify
 ```
 
 Tradeoff: the Mac must be awake, logged in, and able to run the browser workflow. Claude Code can be the operator for this path; Codex can help maintain the skill and scripts.
 
-### 2. NotebookLM Enterprise Cloud
+## Optional Local Queue
 
-Best if the user has Google Cloud NotebookLM Enterprise API access.
-
-Flow:
+Use the queue when the user wants to save a list of topics and process them later.
 
 ```text
-iPhone Shortcut / webhook
-  -> Cloud Run / workflow
-  -> source curation
-  -> NotebookLM Enterprise API
-  -> audio overview
-  -> save-to-spotify or Spotify publishing service
+queue_topic.py
+  -> topic_queue.jsonl
+  -> queue_worker.py --next
+  -> /notebook-podcast-factory ...
 ```
 
-Tradeoff: requires enterprise access, credentials, and Google Cloud setup.
+## Save To Spotify
 
-### 3. Cloud-Native Replacement
-
-Best if the user wants fully cloud phone-to-Spotify and can accept a NotebookLM-like podcast rather than actual NotebookLM.
-
-Flow:
-
-```text
-iPhone Shortcut / webhook
-  -> Cloud Run / worker
-  -> web search + source ingestion
-  -> LLM synthesis
-  -> TTS/dialogue generation
-  -> save-to-spotify
-  -> Spotify
-```
-
-Tradeoff: not NotebookLM; quality depends on custom source curation and prompt design.
-
-## Minimum Viable Phone Intake
-
-Use an iOS Shortcut:
-
-1. Ask for text.
-2. POST JSON to a webhook or append a row to a Google Sheet.
-3. Record only topic, timestamp, and optional mode.
-
-Example JSON:
-
-```json
-{
-  "topic": "Simone Weil's Christianity for a skeptical agnostic",
-  "mode": "local-notebooklm"
-}
-```
-
-## Best Near-Term Recommendation
-
-Use local NotebookLM mode with phone queue first. It preserves the actual NotebookLM experience and requires the least new infrastructure. Later, add cloud-native mode for topics where exact NotebookLM output matters less than fully cloud delivery.
+`save-to-spotify` uploads an existing audio file to Spotify as an episode. It does not generate audio. In this workflow, NotebookLM generates the audio and `save-to-spotify` publishes the downloaded file.

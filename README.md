@@ -1,6 +1,6 @@
 # Research Podcast Factory
 
-A local-first workflow for turning a short topic into a serious research podcast.
+A local workflow for turning a short topic into a serious research podcast.
 
 The aim is simple:
 
@@ -12,16 +12,15 @@ topic
   -> Spotify episode
 ```
 
-This repo packages a workflow for people who want the same loop: capture a question, gather sources worth trusting, generate a NotebookLM Audio Overview, and put the finished episode where they already listen.
+This repo packages a desktop workflow for people who want the same loop: start with a question, gather sources worth trusting, generate a NotebookLM Audio Overview, and put the finished episode where they already listen.
 
 Codex and Claude Code were used to build and operate the first version. They are not the product. The product is the workflow:
 
 ```text
-phone or laptop topic
-  -> queue
-  -> Mac runner
+topic on your Mac
   -> source curation
   -> NotebookLM
+  -> downloaded audio file
   -> save-to-spotify
   -> Spotify
 ```
@@ -29,24 +28,23 @@ phone or laptop topic
 ## What This Includes
 
 - A Codex skill for topic intake and source standards: `$research-podcast-factory`
-- Claude Code slash commands for people who want to operate the local Mac runner through Claude Code:
+- Claude Code slash commands for operating the local workflow:
   - `/research-notebook-factory`
   - `/process-podcasts`
   - `/notebook-podcast-factory`
-- A phone-friendly queue script
-- A tiny webhook for iOS Shortcuts
+- A local topic queue script
 - A preflight checker for the local Mac setup
 - Smoke tests for the portable pieces
+- Notes on Spotify's `save-to-spotify` CLI
 
 ## The Actual Stack
 
 These are the runtime pieces:
 
-- **Phone capture:** an iOS Shortcut sends one topic to your Mac.
-- **Queue:** `topic_queue.jsonl` stores incoming topics.
-- **Mac runner:** your Mac reads the queue and runs the local NotebookLM workflow.
+- **Local topic input:** type or paste the topic on your Mac.
 - **Source curation:** the command builds a compact source pack and prompt pack.
 - **NotebookLM:** holds sources and generates the Audio Overview.
+- **Local audio file:** the downloaded NotebookLM `.m4a`.
 - **Save to Spotify:** Spotify's CLI for uploading personal audio files as Spotify episodes.
 - **Spotify:** where the finished episode appears.
 
@@ -59,23 +57,9 @@ You can replace the operator layer. The workflow shape matters more than which a
 
 ## What This Does Not Hide
 
-Consumer NotebookLM does not currently behave like a normal public cloud API. The personal NotebookLM path depends on a logged-in browser or MCP runner on a Mac.
+Consumer NotebookLM does not currently behave like a normal public API. The personal NotebookLM path depends on a logged-in browser or MCP runner on a Mac.
 
-That means the practical paths are:
-
-1. **Local NotebookLM path**
-   - Best if you want real NotebookLM Audio Overviews.
-   - Requires your Mac to be awake and authenticated.
-
-2. **NotebookLM Enterprise path**
-   - Best if you have Google Cloud NotebookLM Enterprise access.
-   - Can be moved into cloud infrastructure.
-
-3. **NotebookLM-like cloud path**
-   - Best if you want phone-to-Spotify with no Mac.
-   - Replaces NotebookLM with search, source ingestion, synthesis, TTS, and publishing.
-
-This repo starts with the first path because it preserves the actual NotebookLM output.
+This repo starts with the local path because it preserves the actual NotebookLM output.
 
 ## Install
 
@@ -132,67 +116,27 @@ Process ready audio:
 /process-podcasts
 ```
 
-## Phone Workflow
+## Local Queue
 
-The phone workflow is:
+The queue is optional. It is useful when you want to jot down several topics and process them later.
 
-```text
-iPhone Shortcut
-  -> POST /topic on your Mac
-  -> topic_queue.jsonl
-  -> queue_worker.py prints the next runner command
-  -> local Mac runner creates/processes the NotebookLM podcast
-```
-
-The smallest phone input is one line:
-
-```text
-podcast: Dostoevsky and the problem of evil
-```
-
-For a local test:
+Add a topic:
 
 ```bash
 python3 scripts/queue_topic.py "Dostoevsky and the problem of evil"
-python3 scripts/queue_worker.py --next
 ```
 
-To receive phone topics, run this on your Mac:
-
-```bash
-python3 scripts/topic_webhook.py --host 0.0.0.0 --port 8765
-```
-
-Then create an iOS Shortcut that POSTs JSON to:
-
-```text
-http://YOUR_MAC_LAN_IP:8765/topic
-```
-
-Example body:
-
-```json
-{
-  "topic": "Simone Weil's Christianity for a skeptical agnostic",
-  "mode": "local-notebooklm"
-}
-```
-
-See [docs/iphone-shortcut.md](docs/iphone-shortcut.md).
-
-After sending a topic from your phone, check the queue:
+Show the next queued command:
 
 ```bash
 python3 scripts/queue_worker.py --next
 ```
 
-That prints the next command to run in Claude Code, for example:
+That prints a command to run in Claude Code, for example:
 
 ```text
 /notebook-podcast-factory "Dostoevsky and the problem of evil" --audience "Roman, curious skeptical listener"
 ```
-
-The current repo does not pretend your phone can directly drive consumer NotebookLM in the cloud. Your phone captures the topic; your Mac performs the NotebookLM work.
 
 ## State
 
@@ -223,6 +167,8 @@ save-to-spotify shows --json
 
 The workflow uses JSON output so it can store episode IDs and avoid duplicate uploads.
 
+See [docs/save-to-spotify.md](docs/save-to-spotify.md).
+
 ## Local Checks
 
 Run:
@@ -232,26 +178,24 @@ python3 tests/smoke_test.py
 python3 scripts/rpf_preflight.py
 ```
 
-The smoke test checks queueing and webhook capture. The preflight check verifies local tools, state, folders, and Spotify auth.
+The smoke test checks local topic queueing. The preflight check verifies local tools, state, folders, and Spotify auth.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  Phone["Phone topic"] --> Queue["topic_queue.jsonl"]
-  Laptop["Laptop topic"] --> Skill["Codex skill / Claude command"]
-  Queue --> Runner["Mac runner"]
-  Runner --> Skill
+  Topic["Local topic"] --> Skill["Codex skill / Claude command"]
+  Queue["Optional topic_queue.jsonl"] --> Skill
   Skill --> Sources["Source curation"]
   Sources --> Notebook["NotebookLM"]
   Notebook --> Audio["Audio Overview"]
   Audio --> File["Downloaded audio"]
-  File --> Spotify["save-to-spotify"]
-  Spotify --> Episode["Spotify episode"]
+  File --> SpotifyCli["save-to-spotify"]
+  SpotifyCli --> Episode["Spotify episode"]
 ```
 
 ## Why It Is Built This Way
 
-NotebookLM is the reading room and audio generator. The phone/webhook/queue layer is the intake system. The Mac runner handles the local browser-dependent work. `save-to-spotify` publishes the finished audio file to Spotify.
+NotebookLM is the reading room and audio generator. The local queue is a simple way to save topics. `save-to-spotify` publishes the finished audio file to Spotify.
 
 Claude Code and Codex are useful ways to operate and maintain the workflow, but they are not the runtime stack a user needs to understand first.

@@ -1,6 +1,6 @@
 ---
 name: research-podcast-factory
-description: Turn a short topic, question, or phone-captured idea into a source-grounded research podcast workflow for NotebookLM and Spotify. Use when the user asks to make a podcast, NotebookLM notebook, Audio Overview, source pack, prompt pack, Spotify episode, phone-first intake, or cloud/local automation for a learning topic.
+description: Turn a short topic or question into a source-grounded research podcast workflow for NotebookLM and Spotify. Use when the user asks to make a podcast, NotebookLM notebook, Audio Overview, source pack, prompt pack, Spotify episode, or local research-audio workflow for a learning topic.
 ---
 
 # Research Podcast Factory
@@ -42,8 +42,7 @@ If the topic is ambiguous, ask one concise clarifying question. Otherwise procee
 
 2. Choose execution mode:
    - **Local NotebookLM mode** when the user wants actual personal NotebookLM. Requires the Mac, authenticated browser, and NotebookLM MCP/browser tools.
-   - **Cloud NotebookLM Enterprise mode** only if the user has Google Cloud NotebookLM Enterprise access and credentials.
-   - **Cloud-native podcast mode** when the user wants phone-to-Spotify with no Mac dependency. Use search/RAG + LLM synthesis + TTS/podcast generation + `save-to-spotify`, not consumer NotebookLM.
+   - **Manual import mode** when NotebookLM tools are unavailable. Produce the source pack and prompt pack.
 
 3. Curate sources:
    - Prefer primary texts, peer-reviewed/open-access scholarship, university pages, reputable archives, and respected long-form analysis.
@@ -64,46 +63,29 @@ If the topic is ambiguous, ask one concise clarifying question. Otherwise procee
    - Upload audio with `save-to-spotify`.
    - Store state after each step.
 
-## Phone-First Intake
+## Local Topic Queue
 
-The lowest-friction intake should be a one-line capture from the phone:
+The local queue is optional. It is useful when the user wants to save multiple topics and process them later.
 
-```text
-podcast: <topic>
-```
+Use `scripts/queue_topic.py` to append local topic requests to `~/Documents/NotebookLM-Pipeline/topic_queue.jsonl`.
 
-Good capture surfaces:
-
-- iOS Shortcut that appends to a Google Sheet, GitHub issue, or webhook.
-- Text message/email to a dedicated inbox that a runner polls.
-- Telegram/Discord bot if the user wants chat-style capture.
-- Apple Reminders as a local-only option when the Mac is on.
-
-Prefer a queue record with this shape:
+Queue record shape:
 
 ```json
 {
   "topic": "...",
   "audience": "Roman, curious skeptical listener",
-  "mode": "local-notebooklm|cloud-enterprise|cloud-native",
+  "mode": "local-notebooklm",
   "status": "new",
   "created_at": "ISO timestamp"
 }
 ```
 
-Use `scripts/queue_topic.py` to append local topic requests to `~/Documents/NotebookLM-Pipeline/topic_queue.jsonl`.
+## Local Reality
 
-## Cloud Reality
+Consumer NotebookLM is not a normal public API target. It depends on a logged-in browser/UI path. Do not promise full background execution unless a working local NotebookLM tool or browser path is available.
 
-Consumer NotebookLM is not a normal cloud API target. It depends on a logged-in browser/UI path. Do not promise fully cloud consumer NotebookLM unless a real API becomes available.
-
-Cloud options:
-
-- **Best true NotebookLM cloud path:** NotebookLM Enterprise API on Google Cloud, if available to the user. This can support cloud notebook/audio workflows with proper credentials.
-- **Best personal NotebookLM path:** Mac mini or always-on Mac runner using authenticated browser/MCP, triggered from a phone queue.
-- **Best no-Mac path:** Replace NotebookLM with a cloud-native research podcast generator using web search, source ingestion, LLM synthesis, TTS, and `save-to-spotify`.
-
-Make the tradeoff explicit before building.
+When publishing to Spotify, prefer JSON mode so the runner can store episode IDs and skip duplicates.
 
 ## Existing Local Pieces
 
@@ -115,6 +97,3 @@ Known useful commands/files:
 ~/Documents/NotebookLM-Pipeline/state.json
 /Users/romanlicursi/.local/bin/save-to-spotify
 ```
-
-When publishing to Spotify, prefer JSON mode so the runner can store episode IDs and skip duplicates.
-
