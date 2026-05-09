@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Podcast Factory"
+  short_description: "Turn a topic into a research podcast"
+  default_prompt: "Use $research-podcast-factory to turn this topic into a source-grounded podcast workflow."
