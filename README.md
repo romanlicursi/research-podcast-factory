@@ -180,6 +180,14 @@ python3 scripts/rpf_preflight.py
 
 The smoke test checks local topic queueing. The preflight check verifies local tools, state, folders, and Spotify auth.
 
+## Article Images
+
+The original article images are included in:
+
+```text
+assets/article-images/
+```
+
 ## Architecture
 
 ```mermaid
