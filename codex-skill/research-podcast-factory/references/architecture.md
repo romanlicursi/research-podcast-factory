@@ -12,14 +12,14 @@ Flow:
 iPhone Shortcut / text capture
   -> queue record
   -> Mac runner
-  -> Claude Code / Codex command
+  -> local NotebookLM operator
   -> NotebookLM MCP/browser
   -> Audio Overview
   -> save-to-spotify
   -> Spotify
 ```
 
-Tradeoff: the Mac must be awake, logged in, and able to run the browser workflow.
+Tradeoff: the Mac must be awake, logged in, and able to run the browser workflow. Claude Code can be the operator for this path; Codex can help maintain the skill and scripts.
 
 ### 2. NotebookLM Enterprise Cloud
 
@@ -76,4 +76,3 @@ Example JSON:
 ## Best Near-Term Recommendation
 
 Use local NotebookLM mode with phone queue first. It preserves the actual NotebookLM experience and requires the least new infrastructure. Later, add cloud-native mode for topics where exact NotebookLM output matters less than fully cloud delivery.
-

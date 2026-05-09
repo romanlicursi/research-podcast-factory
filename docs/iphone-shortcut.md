@@ -2,6 +2,24 @@
 
 This is the quick phone capture path for the local Mac workflow.
 
+What it does:
+
+```text
+iPhone Shortcut
+  -> sends a topic to your Mac
+  -> Mac writes the topic into topic_queue.jsonl
+  -> you run the next queued topic through the local NotebookLM workflow
+```
+
+What it does not do yet:
+
+```text
+iPhone
+  -> fully cloud consumer NotebookLM
+```
+
+Consumer NotebookLM still needs a logged-in browser/Mac path unless you use NotebookLM Enterprise or replace NotebookLM with a custom cloud audio generator.
+
 ## 1. Start The Mac Inbox
 
 On your Mac:
@@ -50,6 +68,21 @@ You should see a Claude Code command like:
 ```text
 /notebook-podcast-factory Simone Weil's Christianity for a skeptical agnostic --audience "Roman, curious skeptical listener"
 ```
+
+Run that command in Claude Code to start the local Mac workflow.
+
+## 4. What Happens Next
+
+The local workflow should:
+
+1. curate accessible sources,
+2. create or prepare the NotebookLM notebook,
+3. add the source pack,
+4. generate the Audio Overview,
+5. download the audio,
+6. upload it through `save-to-spotify`.
+
+`save-to-spotify` is Spotify's CLI for saving personal media to Spotify. In this project, it is the last step: it takes the NotebookLM audio file and creates a Spotify episode.
 
 ## Notes
 

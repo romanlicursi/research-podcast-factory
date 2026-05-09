@@ -10,12 +10,12 @@ Use this if you want the actual NotebookLM Audio Overview.
 iPhone Shortcut
   -> queue
   -> Mac runner
-  -> Claude Code / Codex
+  -> local NotebookLM operator
   -> NotebookLM
   -> save-to-spotify
 ```
 
-This is the easiest path to get working today. The tradeoff is that your Mac must be awake and logged in.
+This is the easiest path to get working today. Claude Code can be the operator for this path, and Codex can help maintain the workflow, but the actual system is phone -> queue -> Mac -> NotebookLM -> Spotify. The tradeoff is that your Mac must be awake and logged in.
 
 ## 2. NotebookLM Enterprise
 
@@ -46,4 +46,3 @@ iPhone Shortcut
 ```
 
 This path can run fully in the cloud. The cost is that you now own the quality of the source selection, prompting, and audio format.
-
