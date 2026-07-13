@@ -1,0 +1,23 @@
+name: cloud-runner
+
+on:
+  push:
+    paths:
+      - "cloud/**"
+      - ".github/workflows/cloud.yml"
+  pull_request:
+    paths:
+      - "cloud/**"
+      - ".github/workflows/cloud.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r cloud/requirements.txt
+      - run: cd cloud && python -m unittest discover -s tests -v
+      - run: python -m py_compile cloud/rpf_cloud.py cloud/runner.py
