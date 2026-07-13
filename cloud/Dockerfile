@@ -9,4 +9,4 @@ COPY . /workspace
 RUN chmod +x /workspace/cloud/scripts/entrypoint.sh
 WORKDIR /workspace/cloud
 ENTRYPOINT ["/usr/bin/tini","--","/workspace/cloud/scripts/entrypoint.sh"]
-CMD ["python","rpf_cloud.py","api"]
+CMD ["python","runner.py","api"]
