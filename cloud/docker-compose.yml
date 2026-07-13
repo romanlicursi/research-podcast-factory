@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: cloud/Dockerfile
+    command: ["python","rpf_cloud.py","api"]
+    env_file: .env
+    restart: unless-stopped
+    ports: ["8787:8787"]
+    volumes: ["rpf-data:/data","rpf-config:/config"]
+  worker:
+    build:
+      context: ..
+      dockerfile: cloud/Dockerfile
+    command: ["python","rpf_cloud.py","worker"]
+    env_file: .env
+    restart: unless-stopped
+    environment:
+      RPF_ENABLE_AUTH_BROWSER: "true"
+    ports: ["127.0.0.1:6080:6080","127.0.0.1:9222:9222"]
+    volumes: ["rpf-data:/data","rpf-config:/config"]
+volumes:
+  rpf-data:
+  rpf-config:
