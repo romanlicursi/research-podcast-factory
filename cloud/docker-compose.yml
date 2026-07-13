@@ -3,7 +3,7 @@ services:
     build:
       context: ..
       dockerfile: cloud/Dockerfile
-    command: ["python","rpf_cloud.py","api"]
+    command: ["python","runner.py","api"]
     env_file: .env
     restart: unless-stopped
     ports: ["8787:8787"]
@@ -12,7 +12,7 @@ services:
     build:
       context: ..
       dockerfile: cloud/Dockerfile
-    command: ["python","rpf_cloud.py","worker"]
+    command: ["python","runner.py","worker"]
     env_file: .env
     restart: unless-stopped
     environment:
